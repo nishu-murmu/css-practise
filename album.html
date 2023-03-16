@@ -92,43 +92,31 @@
 
       <!-- Main Section -->
       <div class="blog-section">
+        <div class="search-section">
+          <div class="search">
+            <input
+              type="text"
+              placeholder="Search here..."
+              class="search-text"
+              id="search-text"
+            />
+            <select id="filters" name="filter">
+              <option value="default">Album Id</option>
+              <option value="1">First Album</option>
+              <option value="2">Second Album</option>
+              <option value="3">Third Album</option>
+              <option value="4">Fourth Album</option>
+              <option value="5">Fifth Album</option>
+            </select>
+          </div>
+        </div>
         <div class="container">
           <!-- <div id="loader"></div> -->
-          <div id="blog-section" class="blog-card-wrapper">
-            <div id="blog" class="blog-card">
-              <div class="blog-img">
-                <img
-                  id="blog-img"
-                  src="/images/Samosachutney.jpg"
-                  alt="samosa"
-                />
-              </div>
-              <div class="card-body">
-                <p id="blog-description" class="card-description">
-                  This is a wider card with supporting text below as a natural
-                  lead-in to additional content. This content is a little bit
-                  longer.
-                </p>
-                <div class="card-buttons">
-                  <div class="button-wrapper">
-                    <button class="button button-outline">View</button>
-                    <button class="button button-outline">Edit</button>
-                  </div>
-                  <p class="time-line"><small>9 mins</small></p>
-                </div>
-              </div>
-            </div>
-            <div id="blog" class="blog-card-test"></div>
-            <div id="blog" class="blog-card-test"></div>
-            <div id="blog" class="blog-card-test"></div>
-            <div id="blog" class="blog-card-test"></div>
-            <div id="blog" class="blog-card-test"></div>
-            <div id="blog" class="blog-card-test"></div>
-            <div id="blog" class="blog-card-test"></div>
-            <div id="blog" class="blog-card-test"></div>
-            <div id="blog" class="blog-card-test"></div>
-            <div id="blog" class="blog-card-test"></div>
-          </div>
+
+          <div id="blog-section" class="blog-card-wrapper"></div>
+          <button id="load-more" class="button button-primary">
+            Load More
+          </button>
         </div>
       </div>
 
