@@ -94,13 +94,19 @@
       <div class="blog-section">
         <div class="search-section">
           <div class="search">
-            <input
-              type="text"
-              placeholder="Search here..."
-              class="search-text"
-              id="search-text"
-            />
+            <div class="input-field">
+              <input
+                type="text"
+                placeholder="Search here..."
+                class="search-text"
+                id="search-text"
+              />
+              <button id="clear" class="clear button-green button">
+                Clear
+              </button>
+            </div>
             <select id="filters" name="filter">
+              <option value="all">All</option>
               <option value="1">First Album</option>
               <option value="2">Second Album</option>
               <option value="3">Third Album</option>

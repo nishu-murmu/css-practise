@@ -38,6 +38,9 @@
   --primary: #0d6efd;
   --primary-link: #0a58ca;
   --primary-dark: #0b5ed7;
+  --green-50: #d1e7dd;
+  --green-200: #59981A;
+  --green-700: #008000;
   --light: #f8f9fa;
   --radius-5: 0.25rem;
   --radius-10: 0.5rem;
@@ -147,7 +150,7 @@ body {
   list-style: none;
 }
 .hidden {
-  display: none;
+  display: none!important;
 }
 .contact-section-links li a {
   margin-bottom: 4px;
@@ -224,6 +227,25 @@ body {
   background-color: var(--grey-50);
 }
 
+.button-green {
+  background-color: var(--green-700);
+  color: var(--white);
+  border-color: var(--green-200);
+}
+.button-green:hover {
+  background-color: var(--green-200);
+}
+.button-green:active {
+  border-color: var(--green-300);
+}
+
+.no-data {
+  color: var(--grey-border);
+  text-align: center;
+  font-size: 2.5rem;
+  margin-top: 2rem;
+}
+
 /* Main Section */
 
 .blog-section {
@@ -234,6 +256,10 @@ body {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   grid-gap: 25px;
+}
+
+.one-column {
+  grid-template-columns: repeat(1, 1fr);
 }
 .blog-card {
   border: 1px solid transparent;
