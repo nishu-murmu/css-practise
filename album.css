@@ -246,6 +246,9 @@ body {
   animation: fadeIn 2s;
 }
 
+.no-animation {
+  animation: none!important;
+}
 .blog-card-test {
   border: 1px solid transparent;
   border-radius: var(--radius-10);
