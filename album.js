@@ -96,6 +96,8 @@ const getFilters = (
 
   if (arr.length < 10) {
     loadMoreButton.classList.add("hidden");
+  } else {
+    loadMoreButton.classList.remove("hidden");
   }
 
   return arr;
