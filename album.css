@@ -269,11 +269,11 @@ body {
   border-top-right-radius: var(--radius-5);
   overflow: hidden;
   box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
-  animation: fadeIn 2s;
+  
 }
 
-.no-animation {
-  animation: none!important;
+.fadeIn {
+  animation:fadeIn 2s;
 }
 .blog-card-test {
   border: 1px solid transparent;
@@ -337,6 +337,13 @@ body {
 
 #load-more {
   margin: 1rem calc(50% - 102.27px);
+}
+
+#limit {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--grey-30);
+  margin:  1rem calc(50% - 190px);
 }
 
 .search {
@@ -456,6 +463,16 @@ body {
   .footer-wrapper {
     gap: 5px;
   }
+  
+  .search {
+    margin: 1rem 0%;
+    padding: 0 20px;
+  }
+  
+  #load-more {
+    margin:1rem calc(50% - 61.269999999999996px)
+  }
+  
 }
 
 /* animations */

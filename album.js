@@ -33,34 +33,46 @@ const showSkeleton = () => {
   }
 };
 
-const getHTML = (arr) => {
+const getHTML = (arr, isAPIcall) => {
+  showSkeleton();
   innerhtml = "";
+
   arr.forEach((item) => {
     innerhtml += `
-    <div class="blog-card" id="blog-card">
-      <div class="blog-img">
-        <img
-          id="blog-img"
-          src="${item.url}"
-          alt="samosa"
-        />
-      </div>
-      <div class="card-body">
-        <p id="blog-description" class="card-description">
-            ${item.title}
-        </p>
-        <div class="card-buttons">
-          <div class="button-wrapper">
-            <button class="button button-outline">${item.albumId}</button>
-            <button class="button button-outline">${item.id}</button>
+      <div class="blog-card" id="blog-card">
+        <div class="blog-img">
+          <img
+            id="blog-img"
+            src="${item.url}"
+            alt="samosa"
+          />
+        </div>
+        <div class="card-body">
+          <p id="blog-description" class="card-description">
+              ${item.title}
+          </p>
+          <div class="card-buttons">
+            <div class="button-wrapper">
+              <button class="button button-outline">${item.albumId}</button>
+              <button class="button button-outline">${item.id}</button>
+            </div>
+              <p class="time-line"><small>${new Date().toLocaleTimeString()}</small></p>
           </div>
-            <p class="time-line"><small>${new Date().toLocaleTimeString()}</small></p>
         </div>
       </div>
-    </div>
-`;
+  `;
   });
-  blogSection.innerHTML = innerhtml;
+
+  setTimeout(() => {
+    blogSection.innerHTML = innerhtml;
+    console.log("check");
+  }, 1000);
+
+  if (isAPIcall) {
+    document.querySelectorAll(".blog-card").forEach((item) => {
+      item.classList.add("fadeIn");
+    });
+  }
 };
 
 const getFilters = (
@@ -72,31 +84,33 @@ const getFilters = (
   isFilter,
   limit
 ) => {
-  if (isSearch) {
-    arr = arr.filter((item) =>
-      item.title.toLowerCase().includes(inputValue.toLowerCase())
-    );
-  }
-
-  if (isFilter) {
-    arr = arr.filter((item) => {
+  arr = arr.filter((item) => {
+    if (isSearch) {
+      return item.title.toLowerCase().includes(inputValue.toLowerCase());
+    }
+    if (isFilter) {
       return item.albumId === parseInt(filtervalue);
-    });
-  }
-
-  if (isFilter && isSearch) {
-    arr = arr.filter((item) => {
+    }
+    if (isFilter && isSearch) {
       return (
         item.title.toLowerCase().includes(inputValue.toLowerCase()) &&
         item.albumId === parseInt(filtervalue)
       );
-    });
-  }
+    }
+    return item;
+  });
   arr = arr.slice(start, limit);
+  console.log({ start, limit, arr, isLoadMore, size });
 
-  if (arr.length < 10) {
+  if (limit === 50 && isLoadMore) {
+    document.querySelector("#limit").classList.remove("hidden");
     loadMoreButton.classList.add("hidden");
-  } else {
+  }
+  if (size > arr.length) {
+    loadMoreButton.classList.add("hidden");
+  }
+  if (arr.length == 10) {
+    document.querySelector("#limit").classList.add("hidden");
     loadMoreButton.classList.remove("hidden");
   }
 
@@ -124,15 +138,11 @@ function getPhotos() {
       isFilter,
       size
     );
-    getHTML(resultArray);
-
-    for (let i = 0; i < blogCard.length; ++i) {
-      blogCard[i].classList.remove("hidden");
-    }
+    getHTML(resultArray, true);
   }, 2000);
   setTimeout(() => {
     // removeLoader();
-    removeSkeleton();
+    // removeSkeleton();
   }, 2100);
 }
 
@@ -182,7 +192,7 @@ loadMoreButton.onclick = () => {
 };
 
 // function to search photos
-inputElem.addEventListener("change", () => {
+inputElem.addEventListener("keydown", () => {
   isSearch = true;
   size = 10;
   search(inputElem.value, isSearch);
