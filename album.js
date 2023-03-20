@@ -1,4 +1,6 @@
 let totalList = [];
+let url = "";
+let queryString = "";
 let start = 0;
 let innerhtml = "";
 let size = 10;
@@ -14,15 +16,6 @@ let inputElem = document.getElementById("search-text");
 let filterElem = document.getElementById("filters");
 let clearButton = document.getElementById("clear");
 
-// common functions
-const removeLoader = () => {
-  radialLoader.classList.add("hidden");
-};
-const removeSkeleton = () => {
-  for (let i = 0; i < skeletonCard.length; ++i) {
-    skeletonCard[i].classList.add("hidden");
-  }
-};
 const showSkeleton = () => {
   for (let i = 0; i < 10; ++i) {
     innerhtml += `<div class="hidden blog-card-test"></div>`;
@@ -65,7 +58,6 @@ const getHTML = (arr, isAPIcall) => {
 
   setTimeout(() => {
     blogSection.innerHTML = innerhtml;
-    console.log("check");
   }, 1000);
 
   if (isAPIcall) {
@@ -82,7 +74,8 @@ const getFilters = (
   isLoadMore,
   isSearch,
   isFilter,
-  limit
+  limit,
+  isQuery
 ) => {
   arr = arr.filter((item) => {
     if (isSearch) {
@@ -97,10 +90,15 @@ const getFilters = (
         item.albumId === parseInt(filtervalue)
       );
     }
+    if (isQuery) {
+      return (
+        item.title.toLowerCase().includes(inputValue.toLowerCase()) &&
+        item.albumId === parseInt(filtervalue)
+      );
+    }
     return item;
   });
   arr = arr.slice(start, limit);
-  console.log({ start, limit, arr, isLoadMore, size });
 
   if (limit === 50 && isLoadMore) {
     document.querySelector("#limit").classList.remove("hidden");
@@ -118,7 +116,7 @@ const getFilters = (
 };
 
 // functions
-function getPhotos() {
+function getPhotos(inputValue, filterValue, isQuery) {
   showSkeleton();
   inputElem.value = "";
 
@@ -128,22 +126,18 @@ function getPhotos() {
       .then((data) => {
         totalList = data;
       });
-
     const resultArray = getFilters(
       totalList,
-      inputElem.value,
-      filterElem.value,
+      inputValue,
+      filterValue,
       isLoadMore,
       isSearch,
       isFilter,
-      size
+      size,
+      isQuery
     );
     getHTML(resultArray, true);
   }, 2000);
-  setTimeout(() => {
-    // removeLoader();
-    // removeSkeleton();
-  }, 2100);
 }
 
 const search = (inputValue, isSearch) => {
@@ -173,7 +167,32 @@ const filter = (value, isFilter) => {
 };
 
 // function to get photos from the api
-getPhotos(0, size);
+const getURLParams = () => {
+  url = "http://127.0.0.1:5500/album.html?";
+  let obj = {
+    input: inputElem.value,
+    filter: filterElem.value,
+  };
+  const queryParams = new URLSearchParams(obj);
+  queryString = queryParams.toString();
+  window.location.href = url + queryString;
+};
+
+window.onload = () => {
+  try {
+    let url = new URL(window.location.href);
+    inputElem.value = url.searchParams.get("input");
+    filterElem.value = url.searchParams.get("filter");
+    console.log({ paramsI: inputElem.value, paramsF: filterElem.value });
+    if (inputElem.value || filterElem.value) {
+      getPhotos(inputElem.value, filterElem.value, true);
+    } else {
+      getPhotos(inputElem.value, filterElem.value, false);
+    }
+  } catch (err) {
+    console.log(err);
+  }
+};
 
 // function to load more photos
 loadMoreButton.onclick = () => {
@@ -192,11 +211,13 @@ loadMoreButton.onclick = () => {
 };
 
 // function to search photos
-inputElem.addEventListener("keydown", () => {
+inputElem.addEventListener("keyup", () => {
   isSearch = true;
   size = 10;
   search(inputElem.value, isSearch);
 });
+
+inputElem.addEventListener("change", () => getURLParams());
 
 clearButton.addEventListener("click", () => {
   inputElem.value = "";
@@ -216,4 +237,5 @@ filterElem.addEventListener("change", () => {
     size = 10;
     filter(filterElem.value, isFilter);
   }
+  getURLParams();
 });
