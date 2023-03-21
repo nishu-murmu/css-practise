@@ -11,7 +11,7 @@ let blogCard = document.getElementsByClassName("blog-card")
 let blogSection = document.getElementById("blog-section")
 let skeletonCard = document.getElementsByClassName("blog-card-test")
 let radialLoader = document.getElementById("loader")
-let loadMoreButton = document.getElementById("load-more")
+let loadMoreButton = document.querySelector("#load-more")
 let inputElem = document.getElementById("search-text")
 let filterElem = document.getElementById("filters")
 let clearButton = document.getElementById("clear")
@@ -24,11 +24,10 @@ const showSkeleton = () => {
   for (let i = 0; i < skeletonCard.length; ++i) {
     skeletonCard[i].classList.remove("hidden")
   }
-  loadMoreButton.classList.add("hidden")
 }
 
 const getHTML = (arr, isAPIcall) => {
-  showSkeleton()
+  if(!isAPIcall) showSkeleton()
   innerhtml = ""
 
   arr.forEach((item) => {
@@ -38,7 +37,6 @@ const getHTML = (arr, isAPIcall) => {
           <img
             id="blog-img"
             src="${item.url}"
-            alt="samosa"
           />
         </div>
         <div class="card-body">
@@ -59,14 +57,15 @@ const getHTML = (arr, isAPIcall) => {
 
   setTimeout(() => {
     blogSection.innerHTML = innerhtml
-    if(size !== 50) loadMoreButton.classList.remove("hidden")
+    if(size !== 50) {
+      loadMoreButton.classList.remove("hidden")
+    }
+    if (isAPIcall) {
+      document.querySelectorAll(".blog-card").forEach((item) => {
+        item.classList.add("fadeIn")
+      })
+    }
   }, 1000)
-
-  if (isAPIcall) {
-    document.querySelectorAll(".blog-card").forEach((item) => {
-      item.classList.add("fadeIn")
-    })
-  }
 }
 
 const getFilters = (
@@ -78,8 +77,10 @@ const getFilters = (
   isFilter,
   limit
 ) => {
+  console.log({arr, inputValue, filtervalue, isLoadMore, isSearch, isFilter})
   arr = arr.filter((item) => {
     if (isFilter && isSearch) {
+      if (filtervalue === "all") return item.title.toLowerCase().includes(inputValue.toLowerCase())
       return (
         item.title.toLowerCase().includes(inputValue.toLowerCase()) &&
         item.albumId === parseInt(filtervalue)
@@ -92,8 +93,9 @@ const getFilters = (
       if (isNaN(filtervalue)) return item
       return item.albumId === parseInt(filtervalue)
     }
-    // return item
+    return item
   })
+  console.log(arr, 'arr')
   arr = arr.slice(start, limit)
 
   if (filtervalue !== "all" && limit === 50 && isLoadMore) {
@@ -105,17 +107,15 @@ const getFilters = (
   }
   if (arr.length == 10) {
     document.querySelector("#limit").classList.add("hidden")
-    loadMoreButton.classList.remove("hidden")
+    // loadMoreButton.classList.remove("hidden")
   }
 
   return arr
 }
 
 // functions
-function getPhotos(inputValue, filterValue, isSearch, isFilter, isQuery) {
+async function getPhotos(inputValue, filterValue, isSearch, isFilter, isQuery) {
   showSkeleton()
-
-  setTimeout(async () => {
     await fetch("https://jsonplaceholder.typicode.com/photos")
       .then((res) => res.json())
       .then((data) => {
@@ -132,8 +132,17 @@ function getPhotos(inputValue, filterValue, isSearch, isFilter, isQuery) {
       size,
       isQuery
     )
+
     getHTML(resultArray, true)
-  }, 2000)
+  setTimeout(() => {
+    if(resultArray.length == 0) {
+      loadMoreButton.classList.add("hidden")
+      blogSection.innerHTML = `<div class="no-data">No Data Found!</div>`
+    }
+    if(resultArray.length < size) {
+      loadMoreButton.classList.add("hidden")
+    }
+  }, 1000);
 }
 
 const search = (inputValue, isSearch) => {
@@ -162,6 +171,14 @@ const filter = (value, isFilter) => {
   getHTML(resultArray)
 }
 
+function debounce(func, timeout = 1000) {
+  let timer;
+  return (...args) => {
+    clearTimeout(timer);
+    timer = setTimeout(() => { func.apply(this, args); }, timeout);
+  };
+}
+const processChange = debounce(() => getURLParams());
 // function to get photos from the api
 const getURLParams = () => {
   url = "http://127.0.0.1:5500/album.html?"
@@ -177,6 +194,7 @@ const getURLParams = () => {
 window.onload = () => {
   try {
     let url = new URL(window.location.href)
+    if (url.href === "http://127.0.0.1:5500/album.html") window.location.href = url.href + `?input=${inputElem.value}&filter=${filterElem.value}`
     inputElem.value = url.searchParams.get("input")
     filterElem.value = url.searchParams.get("filter")
 
@@ -185,9 +203,7 @@ window.onload = () => {
     if (inputElem.value) isSearch = true
     if (inputElem.value || filterElem.value) {
       getPhotos(inputElem.value, filterElem.value, isSearch, isFilter, true)
-    } else {
-      getPhotos(inputElem.value, filterElem.value, isSearch, isFilter, false)
-    }
+    } 
   } catch (err) {
     console.log(err)
   }
@@ -214,10 +230,10 @@ inputElem.addEventListener("keyup", () => {
   isSearch = true
   size = 10
   search(inputElem.value, isSearch)
-  // getURLParams()
+  processChange()
 })
 
-inputElem.addEventListener("change", () => getURLParams())
+// inputElem.addEventListener("change", () => getURLParams())
 
 clearButton.addEventListener("click", () => {
   inputElem.value = ""
