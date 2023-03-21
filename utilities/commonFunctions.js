@@ -4,9 +4,11 @@ const showSkeleton = () => {
     innerhtml += `<div class="hidden blog-card-test"></div>`;
   }
   blogSection.innerHTML = innerhtml;
+
   for (let i = 0; i < skeletonCard.length; ++i) {
     skeletonCard[i].classList.remove("hidden");
   }
+  loadMoreButton.classList.add("hidden");
 };
 
 const getHTML = (arr, filterArr, isAPIcall) => {
@@ -18,8 +20,8 @@ const getHTML = (arr, filterArr, isAPIcall) => {
       <div class="blog-card" id="blog-card">
         <div class="blog-img">
           <img
-            id="blog-img"
-            src="${item.url}"
+            class="card-image"
+            src=${item.url}
           />
         </div>
         <div class="card-body">
