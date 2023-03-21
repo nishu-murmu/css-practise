@@ -24,6 +24,7 @@ const showSkeleton = () => {
   for (let i = 0; i < skeletonCard.length; ++i) {
     skeletonCard[i].classList.remove("hidden")
   }
+  loadMoreButton.classList.add("hidden")
 }
 
 const getHTML = (arr, isAPIcall) => {
@@ -58,6 +59,7 @@ const getHTML = (arr, isAPIcall) => {
 
   setTimeout(() => {
     blogSection.innerHTML = innerhtml
+    if(size !== 50) loadMoreButton.classList.remove("hidden")
   }, 1000)
 
   if (isAPIcall) {
@@ -94,7 +96,7 @@ const getFilters = (
   })
   arr = arr.slice(start, limit)
 
-  if (limit === 50 && isLoadMore) {
+  if (filtervalue !== "all" && limit === 50 && isLoadMore) {
     document.querySelector("#limit").classList.remove("hidden")
     loadMoreButton.classList.add("hidden")
   }
