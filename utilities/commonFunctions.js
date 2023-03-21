@@ -45,12 +45,6 @@ const getHTML = (arr, filterArr, isAPIcall) => {
     if (size !== 50) {
       loadMoreButton.classList.remove("hidden");
     }
-    console.log({
-      size,
-      len: arr.length,
-      actualarr: arr,
-      expectedarr: filterArr,
-    });
     if (size === arr.length) {
       loadMoreButton.classList.add("hidden");
     }
